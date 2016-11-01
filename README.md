@@ -10,6 +10,7 @@ Arduino Sketch:
 * autosetup with wifi manager 
   (Wifi parameters, CCU IP Adress, variables for humidity and temperature) 
 * config is stored as json
+* small managment interface via html
 
 
 Install:
@@ -23,9 +24,12 @@ Todos:
 * proper webinterface
 * addon for [WeMos Battery shield](https://www.wemos.cc/product/battery-shield.html) LiPo 
 * additional **connectedobjects**
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 32dfd03f4c8bf3f7c7b81cf6910d98b9cff9d02b
 
   
  
