@@ -10,6 +10,7 @@ Arduino Sketch:
 * autosetup with wifi manager 
   (Wifi parameters, CCU IP Adress, variables for humidity and temperature) 
 * config is stored as json
+* small managment interface via html
 
 
 Install:
@@ -17,7 +18,6 @@ Install:
 * ESP8266 starts in AP Mode, connect and configure
 * create to variables on CCU (same names as configured in the step before)
 * use variables in own programs on CCU
-
 
 
 
