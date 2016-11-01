@@ -23,7 +23,7 @@
 #include "DHT.h"
 #include "config.h"
 ESP8266WebServer server(80);
-DHT dht(D4, DHT11);
+
 
 //flag for saving data
 bool shouldSaveConfig = false;
@@ -48,6 +48,7 @@ unsigned long nowMillis = 0;
 unsigned long dReadMillis = dReadSeconds * 1000, lastReadMillis = 0;
 unsigned long dMessageMillis = dMessageSeconds * 1000, lastMessageMillis = 0;
 String answer = "", message = "",lastmessageCCUtime = "";
+
 
 String timestamp() { 
   char stamp[10];
@@ -90,6 +91,7 @@ void message_CCU() {
     line = client.readStringUntil('\n');
     if (i == 7) {
       lastmessageCCUtime = line;
+      
     }
   }
   Serial.println(timestamp() + "  data writen to ccu " + lastmessageCCUtime);
@@ -99,8 +101,6 @@ void message_CCU() {
 } 
 void root_action() { 
   String uptime = timestamp();
-  
-  
   
   answer ="connectedobjects temperature-/humidity sensor\n";
   answer += "\tuptime: " + uptime + " (hhh:mm:ss)\n\n";
@@ -129,6 +129,7 @@ void root_action() {
   delay(150);
   Serial.println(timestamp() + "  non specific call");
 }
+
 
 void message_humidity() {
   String delta = server.arg("delta");
@@ -206,16 +207,16 @@ void setup() {
   //SPIFFS.format();
 
   //read configuration from FS json
-  Serial.println("mounting FS...");
+  Serial.println(timestamp() + "  mounting FS...");
 
   if (SPIFFS.begin()) {
-    Serial.println("mounted file system");
+  Serial.println(timestamp() + "  mounted file system");
     if (SPIFFS.exists("/config.json")) {
       //file exists, reading and loading
-      Serial.println("reading config file");
+      Serial.println(timestamp() + "  reading config file");
       File configFile = SPIFFS.open("/config.json", "r");
       if (configFile) {
-        Serial.println("opened config file");
+        Serial.println(timestamp() + "  opened config file");
         size_t size = configFile.size();
         // Allocate a buffer to store contents of the file.
         std::unique_ptr<char[]> buf(new char[size]);
@@ -225,18 +226,18 @@ void setup() {
         JsonObject& json = jsonBuffer.parseObject(buf.get());
         json.printTo(Serial);
         if (json.success()) {
-          Serial.println("\nparsed json");
+            Serial.println(timestamp() + "  parsed json");
 
           strcpy(ip_adress_ccu, json["ip_adress_ccu"]);
           strcpy(variable_temp, json["variable_temp"]);
           strcpy(variable_humi, json["variable_humi"]);
         } else {
-          Serial.println("failed to load json config");
+            Serial.println(timestamp() + "  failed to load json config");
         }
       }
     }
   } else {
-    Serial.println("failed to mount FS");
+      Serial.println(timestamp() + "  failed to mount FS");
   }
   //end read
 
@@ -288,17 +289,16 @@ void setup() {
     delay(5000);
   }
 
-  //if you get here you have connected to the WiFi
+  
   Serial.println(timestamp() + "  connected...");
 
-  //read updated parameters
+  
   strcpy(ip_adress_ccu, custom_ip_adress_ccu.getValue());
   Serial.println(timestamp() + "  CCU IP Adress: " + String(ip_adress_ccu));
   strcpy(variable_temp, custom_variable_temp.getValue());
   strcpy(variable_humi, custom_variable_humi.getValue());
 
 
-  //save the custom parameters to FS
   if (shouldSaveConfig) {
     Serial.println(timestamp() + "  saving config");
     DynamicJsonBuffer jsonBuffer;
@@ -314,14 +314,13 @@ void setup() {
     json.printTo(Serial);
     json.printTo(configFile);
     configFile.close();
-    //end save
+
   }
 
   server.on("/", root_action);
   server.on("/temp", message_temp);
   server.on("/humidity", message_humidity);
   server.on("/time", message_time);
-  
 
   server.begin();
 
@@ -332,11 +331,11 @@ void setup() {
 
 // main program
 void loop() {
-  // auf HTTP-Anfragen warten
   server.handleClient();
   nowMillis = millis();
 
   if(nowMillis - lastReadMillis > dReadMillis) {
+    Serial.println(timestamp() + "  time to get new values from sensor");
     metering();
   }
 
@@ -345,10 +344,12 @@ void loop() {
   }
    
    if(!dHumi == 0 && abs(humidity - humidityCCU) >= dHumi) {
+    Serial.println(timestamp() + "  send humidity value to ccu");    
     message_CCU();
   }
 
   if(!dTemp == 0 && abs(temp - tempCCU) >= dTemp) { 
+    Serial.println(timestamp() + "  send temperature value to ccu"); 
     message_CCU();
   }
 }

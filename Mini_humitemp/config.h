@@ -21,3 +21,4 @@ char static_sn[16] = "255.255.255.0";
 char ip_adress_ccu[40] = "192.168.1.98";
 char variable_temp[40] = "standardroom_temperature";
 char variable_humi[40] = "standardroom_humidity";
+DHT dht(D4, DHT11);
