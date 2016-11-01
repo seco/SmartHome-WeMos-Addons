@@ -1,7 +1,7 @@
 # SmartHome-WeMos-Addons
 **Smarthome Addons for Homematic** based on WeMos D1 mini (ESP8266)
 
-With this code and some hardware you can create *connectedobjects* for eq3 homematic CUU
+With this code and some hardware you can create *connectedobjects* for eq3 homematic CCU
 
 temperature/humidity sensor for ccu
 * hardware: WeMos d1 mini & WeMos DHT11 shield
