@@ -101,30 +101,31 @@ void root_action() {
   String uptime = timestamp();
   
   
-  answer = "connectedobjects temperature-/humidity sensor\n";
-  answer = answer + "\tuptime: " + uptime + " (hhh:mm:ss)\n\n";
-  answer = answer + "last data\n\ttemperature: " + String(temp) + " * C\n";
-  answer = answer + "\thumidity: " + String(humidity) + " %\n\n";
-  answer = answer + "correction \n\ttemperatur: " + String(cTemp) + " * C\n";
-  answer = answer + "\thumidity: " + String(cHumi) + " %\n\n";
-  answer = answer + "last transmission to ccu\n\t" + lastmessageCCUtime;
-  answer = answer + "\twritten temperature: " + String(tempCCU) + " * C\n";
-  answer = answer + "\twritten humidity: " + String(humidityCCU) + " %\n\n";
-  answer = answer + "trigger for data transfer to CCU\n";
-  answer = answer + "\ttimeinterval: " + String(dMessageSeconds) + " seconds\n";
-  answer = answer + "\tdelta temperature: " + String(dTemp) + " * C\n";
-  answer = answer + "\tdelta humidity: " + String(dHumi) + " %\n\n\n";
-  answer = answer + "Menu:\n";
-  answer = answer + "\"<IP-Adresse>/temp\"\n\ttemperature in (Celsius)\n";
-  answer = answer + "\"<IP-Adresse>/humidity\"\n\thumidity in (percent)\n";
-  answer = answer + "\"<IP-Adresse>/time\"\n\ttimestamp last ccu update\n";
-  answer = answer + "\"<IP-Adresse>/temp?delta=<value>\"\n\tadjust temperature trigger value\n";
-  answer = answer + "\"<IP-Adresse>/temp?corr=<value>\"\n\tadjust correction factor for temperature\n";
-  answer = answer + "\"<IP-Adresse>/humidity?delta=<value>\"\n\tadjust humidity trigger value\n";
-  answer = answer + "\"<IP-Adresse>/humidity?corr=<value>\"\n\tadjust correction factor for humidity\n";
-  answer = answer + "\"<IP-Adresse>/time?delta=<value> \"\n\tadjust interval for ccu update (s)\n";
-  answer = answer + "\"<IP-Adresse>/time?meter=<value>\"\n\tadjust metering interval (s)\n";
-  server.send(300, "text/plain", answer);
+  
+  answer ="connectedobjects temperature-/humidity sensor\n";
+  answer += "\tuptime: " + uptime + " (hhh:mm:ss)\n\n";
+  answer += "last data\n\ttemperature: " + String(temp) + " * C\n";
+  answer += "\thumidity: " + String(humidity) + " %\n\n";
+  answer += "correction \n\ttemperatur: " + String(cTemp) + " * C\n";
+  answer += "\thumidity: " + String(cHumi) + " %\n\n";
+  answer += "last transmission to ccu\n\t" + lastmessageCCUtime;
+  answer += "\twritten temperature: " + String(tempCCU) + " * C\n";
+  answer += "\twritten humidity: " + String(humidityCCU) + " %\n\n";
+  answer += "trigger for data transfer to CCU\n";
+  answer += "\ttimeinterval: " + String(dMessageSeconds) + " seconds\n";
+  answer += "\tdelta temperature: " + String(dTemp) + " * C\n";
+  answer += "\tdelta humidity: " + String(dHumi) + " %\n\n\n";
+  answer += "Menu:\n";
+  answer += "\"<IP-Adresse>/temp\"\n\ttemperature in (Celsius)\n";
+  answer += "\"<IP-Adresse>/humidity\"\n\thumidity in (percent)\n";
+  answer += "\"<IP-Adresse>/time\"\n\ttimestamp last ccu update\n";
+  answer += "\"<IP-Adresse>/temp?delta=<value>\"\n\tadjust temperature trigger value\n";
+  answer += "\"<IP-Adresse>/temp?corr=<value>\"\n\tadjust correction factor for temperature\n";
+  answer += "\"<IP-Adresse>/humidity?delta=<value>\"\n\tadjust humidity trigger value\n";
+  answer += "\"<IP-Adresse>/humidity?corr=<value>\"\n\tadjust correction factor for humidity\n";
+  answer += "\"<IP-Adresse>/time?delta=<value> \"\n\tadjust interval for ccu update (s)\n";
+  answer += "\"<IP-Adresse>/time?meter=<value>\"\n\tadjust metering interval (s)\n";
+  server.send(300, "text/raw", answer);
   delay(150);
   Serial.println(timestamp() + "  non specific call");
 }
