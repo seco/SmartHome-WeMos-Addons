@@ -25,6 +25,7 @@ Install:
 
 Todos:
 * proper webinterface
+* 3d printable enclosure
 * addon for [WeMos Battery shield](https://www.wemos.cc/product/battery-shield.html)
 * additional **connectedobjects**: wifi switch, OLED display, motion detector, etc.
 
