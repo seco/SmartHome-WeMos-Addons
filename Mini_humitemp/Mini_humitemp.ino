@@ -99,7 +99,7 @@ void message_CCU() {
   humidityCCU = humidity;
   tempCCU = temp;
 } 
-void root_action() { 
+void message_status() { 
   String uptime = timestamp();
   
   answer ="connectedobjects temperature-/humidity sensor\n";
@@ -173,6 +173,39 @@ void message_temp() {
     delay(100);
     Serial.println(timestamp() + "  temperature updated on ccu");
   }
+}
+
+
+void message_root(){
+  float temperature = temp;
+  //float humidity = humidity;
+  char temperatureString[6];
+  char humidityString[11];
+  dtostrf(temperature, 2, 2, temperatureString);
+  dtostrf(humidity, 2, 2, humidityString);
+  
+    String title = "Temperature";
+    String cssClass = "mediumhot";
+     String subtitle = "Humidity";
+  
+    if (temperature < 0)
+      cssClass = "cold";
+    else if (temperature > 20)
+      cssClass = "hot";
+  
+    String message = "<!DOCTYPE html><html><head><title>" + title + "</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
+    message += "html {height: 100%;}";
+    message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
+    message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
+    message += "body {height: 100%;}";
+    message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
+    message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
+    message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
+    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>" + title +  "</h1><h2>" + temperatureString + "&nbsp;<small>&deg;C</small> <p> <h1>" + subtitle +  "</h1><h2>" + humidityString + "&nbsp;<small>&#37;</small></h2></div>";
+    //message += "<div> <h2>" + humidityString + "&nbsp;<small>&deg;C</small></h2></div></body></html>";
+    message += "</body></html>";
+    
+    server.send(200, "text/html", message);
 }
 
 void message_time() {
@@ -317,10 +350,11 @@ void setup() {
 
   }
 
-  server.on("/", root_action);
+  server.on("/", message_root);
   server.on("/temp", message_temp);
   server.on("/humidity", message_humidity);
   server.on("/time", message_time);
+  server.on("/status", message_status); 
 
   server.begin();
 
