@@ -34,7 +34,9 @@ Todos:
 
 Pictures:
 mobile friendly website
+
 ![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/screenshot01.PNG)
 
 status screen
+
 ![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/screenshot02.PNG)
