@@ -14,7 +14,7 @@
  */
 
 
-#include <FS.h>                   //this needs to be first, or it all crashes and burns...
+#include <FS.h>                   
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
@@ -123,7 +123,7 @@ void message_status() {
   answer += "\"<IP-Adresse>/temp?corr=<value>\"\n\tadjust correction factor for temperature\n";
   answer += "\"<IP-Adresse>/humidity?delta=<value>\"\n\tadjust humidity trigger value\n";
   answer += "\"<IP-Adresse>/humidity?corr=<value>\"\n\tadjust correction factor for humidity\n";
-  answer += "\"<IP-Adresse>/time?delta=<value> \"\n\tadjust interval for ccu update (s)\n";
+  answer += "\"<IP-Adresse>/time?delta=<value>\"\n\tadjust interval for ccu update (s)\n";
   answer += "\"<IP-Adresse>/time?meter=<value>\"\n\tadjust metering interval (s)\n";
   server.send(300, "text/raw", answer);
   delay(150);
@@ -202,7 +202,6 @@ void message_root(){
     message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
     message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
     message += "</style></head><body class=\"" + cssClass + "\"><div><h1>" + title +  "</h1><h2>" + temperatureString + "&nbsp;<small>&deg;C</small> <p> <h1>" + subtitle +  "</h1><h2>" + humidityString + "&nbsp;<small>&#37;</small></h2></div>";
-    //message += "<div> <h2>" + humidityString + "&nbsp;<small>&deg;C</small></h2></div></body></html>";
     message += "</body></html>";
     
     server.send(200, "text/html", message);
