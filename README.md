@@ -1,5 +1,5 @@
 # SmartHome-WeMos-Addons
-**SmartHome Addons for Homematic** based on WeMos D1 mini (ESP8266)
+**Addons for Homematic SmartHome Controller** based on WeMos D1 mini (or similar ESP8266 based development boards)
 
 With this code and some hardware, you can create *connectedobjects* for [eq3 homematic CCU](http://www.eq-3.de/produkte/homematic.html)
 
