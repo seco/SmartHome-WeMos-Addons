@@ -20,7 +20,7 @@ Install:
 * upload sketch to ESP8266
 * ESP8266 starts in AP Mode, just connect and configure
 * create two variables on CCU (same names as configured in the step before) for humidity and temperature
-  hint: use name of room as prefix, in the case you plan to have more then one of these small guys
+  ...hint: use name of room as prefix, in the case you plan to have more then one of these small guys
 * use variables and values in own programs on CCU
 
 
