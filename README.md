@@ -23,8 +23,8 @@ Install:
 
    hint: use name of room as prefix, in the case you plan to have more then one of these small guys
 * use variables and values in own programs on CCU
-* http://<ip-adress> for mobile friendly website (see screenshot01.PNG)
-* http://<ip-adress> for status and additional commands
+* http://ip-adress for mobile friendly website (see screenshot01.PNG)
+* http://ip-adress/status for status and additional commands
 
 Todos:
 * proper webinterface for status screen
