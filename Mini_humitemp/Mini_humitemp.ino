@@ -136,20 +136,20 @@ void message_humidity() {
   String corr = server.arg("corr");
   if (delta != "") {
     dHumi = delta.toFloat();
-    server.send(200, "text/plain", "humidity trigger value " + delta + " % updated");
+    server.send(200, "text/plain", "humidity trigger value " + String(dHumi) + " % updated");
     delay(100);
-    Serial.println(timestamp() + "  humidity trigger value " + delta + " %");
+    Serial.println(timestamp() + "  humidity trigger value " + dHumi + " %");
   }
   else if (corr != "") {
-    cHumi = corr.toFloat() * 1000;
-    server.send(200, "text/plain", "correction factor for humidity " + corr + " % updated");
+    cHumi = corr.toFloat();
+    server.send(200, "text/plain", "correction factor for humidity " + String(cHumi) + " % updated");
     delay(100);
-    Serial.println(timestamp() + "  correction factor for humidity " + corr + " %");
+    Serial.println(timestamp() + "  correction factor for humidity " + cHumi + " %");
   }
   else {
     server.send(200, "text/plain", String(humidity));
     delay(100);
-    Serial.println(timestamp() + "  humidity updated on ccu");
+    Serial.println(timestamp() + "  humidity presented for pull");
   } 
 }
 
@@ -158,20 +158,20 @@ void message_temp() {
   String corr = server.arg("corr");
   if (delta != "") {
     dTemp = delta.toFloat();
-    server.send(200, "text/plain", "temperature trigger value " + delta + " * C updated");
+    server.send(200, "text/plain", "temperature trigger value " + String(dTemp) + " * C updated");
     delay(100);
-    Serial.println(timestamp() + "  temperature trigger value " + delta + " * C");
+    Serial.println(timestamp() + "  temperature trigger value " + dTemp + " * C");
   }
   else if (corr != "") {
-    cTemp = corr.toFloat() * 1000;
-    server.send(200, "text/plain", "correction factor for temperature " + corr + " * C updated");
+    cTemp = corr.toFloat();
+    server.send(200, "text/plain", "correction factor for temperature " + String(cTemp) + " * C updated");
     delay(100);
-    Serial.println(timestamp() + "  correction factor for humidity " + corr + " * C");
+    Serial.println(timestamp() + "  correction factor for humidity " + cTemp + " * C");
   }
   else {
     server.send(200, "text/plain", String(temp));
     delay(100);
-    Serial.println(timestamp() + "  temperature updated on ccu");
+    Serial.println(timestamp() + "  temperature presented for pull");
   }
 }
 
@@ -226,7 +226,7 @@ void message_time() {
   else {
     server.send(200, "text/plain", "last ccu update\n" + lastmessageCCUtime);
     delay(100);
-    Serial.println(timestamp() + "  latest ccu update ");
+    Serial.println(timestamp() + "  last ccu update ");
   }
 }
 
