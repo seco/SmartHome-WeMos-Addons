@@ -78,7 +78,7 @@ void message_CCU() {
      delay(600);
     return;
   }
-  message = "GET /eriwan.exe?answer1=dom.GetObject('" + String(variable_humi) + "').State('" + humidity + "')";
+  message = "GET /wormhole.exe?answer1=dom.GetObject('" + String(variable_humi) + "').State('" + humidity + "')";
   message = message + "&answer2=dom.GetObject('" + String(variable_temp) + "').State('" + temp + "')";
 
   client.println(message); 
