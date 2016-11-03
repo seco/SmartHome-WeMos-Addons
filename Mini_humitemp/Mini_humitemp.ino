@@ -201,8 +201,9 @@ void message_root(){
     message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
     message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
     message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
-    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>" + title +  "</h1><h2>" + temperatureString + "&nbsp;<small>&deg;C</small> <p> <h1>" + subtitle +  "</h1><h2>" + humidityString + "&nbsp;<small>&#37;</small></h2></div>";
-    message += "</body></html>";
+    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>" + title +  "</h1><h2>" + temperatureString + "&nbsp;<small>&deg;C</small> <p> <h1>" + subtitle +  "</h1><h2>" + humidityString + "&nbsp;<small>&#37;</small></h2><p><p>";
+    //message += "<FORM style=\"color:blue;font-size:10px;\" METHOD=\"LINK\" ACTION=\"/status\"/><INPUT TYPE=\"submit\" VALUE=\"system status\"/></FORM>";
+    message += "</div></body></html>";
     
     server.send(200, "text/html", message);
 }
