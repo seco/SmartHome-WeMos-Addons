@@ -50,3 +50,7 @@ status screen
 help screen for html pull request from smarthome controller
 
 ![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/screenshot03.PNG)
+
+initial setup
+![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/initial_setup01.PNG)
+![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/initial_setup02.PNG)
