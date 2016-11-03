@@ -99,38 +99,38 @@ void message_CCU() {
   humidityCCU = humidity;
   tempCCU = temp;
 } 
+
 void message_status() { 
   String uptime = timestamp();
-  
-  answer ="connectedobjects temperature-/humidity sensor\n";
-  answer += "\tuptime: " + uptime + " (hhh:mm:ss)\n\n";
-  answer += "last data\n\ttemperature: " + String(temp) + " * C\n";
-  answer += "\thumidity: " + String(humidity) + " %\n\n";
-  answer += "correction \n\ttemperatur: " + String(cTemp) + " * C\n";
-  answer += "\thumidity: " + String(cHumi) + " %\n\n";
-  answer += "last transmission to ccu\n\t" + lastmessageCCUtime;
-  answer += "\twritten temperature: " + String(tempCCU) + " * C\n";
-  answer += "\twritten humidity: " + String(humidityCCU) + " %\n\n";
-  answer += "trigger for data transfer to CCU\n";
-  answer += "\ttimeinterval: " + String(dMessageSeconds) + " seconds\n";
-  answer += "\tdelta temperature: " + String(dTemp) + " * C\n";
-  answer += "\tdelta humidity: " + String(dHumi) + " %\n\n\n";
-  answer += "Menu:\n";
-  answer += "\"<IP-Adresse>/temp\"\n\ttemperature in (Celsius)\n";
-  answer += "\"<IP-Adresse>/humidity\"\n\thumidity in (percent)\n";
-  answer += "\"<IP-Adresse>/time\"\n\ttimestamp last ccu update\n";
-  answer += "\"<IP-Adresse>/temp?delta=<value>\"\n\tadjust temperature trigger value\n";
-  answer += "\"<IP-Adresse>/temp?corr=<value>\"\n\tadjust correction factor for temperature\n";
-  answer += "\"<IP-Adresse>/humidity?delta=<value>\"\n\tadjust humidity trigger value\n";
-  answer += "\"<IP-Adresse>/humidity?corr=<value>\"\n\tadjust correction factor for humidity\n";
-  answer += "\"<IP-Adresse>/time?delta=<value>\"\n\tadjust interval for ccu update (s)\n";
-  answer += "\"<IP-Adresse>/time?meter=<value>\"\n\tadjust metering interval (s)\n";
-  server.send(300, "text/raw", answer);
-  delay(150);
-  Serial.println(timestamp() + "  non specific call");
+    String cssClass = "mediumhot";
+    String message = "<!DOCTYPE html><html><head><title>status</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
+    message += "html {height: 100%;}";
+    message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
+    message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
+    message += "body {height: 100%;}";
+    message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
+    message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
+    message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
+    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>Status</h1>";
+    message += "<h4>uptime: " + uptime + " (hhh:mm:ss)<p>";
+    message += "last metering<br>";
+    message += "temperature: " + String(temp) + " * C<br>";
+    message += "humidity: " + String(humidity) + " %\<p>";
+    message += "metering correction values<br>";
+    message += "temperatur: " + String(cTemp) + " * C<br>";
+    message += "humidity: " + String(cHumi) + " %<p>";
+    message += "smarthome conroller updates<br>";
+    message += "last transmission " + lastmessageCCUtime + "<br>";
+    message += "written temperature: " + String(tempCCU) + " * C<br>";
+    message += "written humidity: " + String(humidityCCU) + " %<p>";
+    message += "trigger for data transfers<br>";
+    message += "timeinterval: " + String(dMessageSeconds) + " seconds<br>";
+    message += "delta temperature: " + String(dTemp) + " * C<br>";
+    message += "delta humidity: " + String(dHumi) + " %<p>";
+    message += "</h4></div></body></html>";
+    server.send(200, "text/html", message);
 }
-
-
+  
 void message_humidity() {
   String delta = server.arg("delta");
   String corr = server.arg("corr");
@@ -206,7 +206,32 @@ void message_root(){
     
     server.send(200, "text/html", message);
 }
+void message_help() {
 
+    String cssClass = "mediumhot";
+String message = "<!DOCTYPE html><html><head><title> Help</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
+    message += "html {height: 100%;}";
+    message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
+    message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
+    message += "body {height: 100%;}";
+    message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
+    message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
+    message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
+    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>HTML interface</h1>";
+    message += "<h4>commands for updating values or to make use of html-calls to pull values from this connectedobject<p>";
+    message += "&lt;IP-Adresse&gt;&#47;temp<br>returns temperature in (Celsius)<p>";
+    message += "&lt;IP-Adresse&gt;&#47;humidity<br>returns humidity in (percent)<p>";
+    message += "&lt;IP-Adresse&gt;&#47;time<br>returns time of last smarthome controller update<p>";
+    message += "&lt;IP-Adresse&gt;&#47;temp?delta=&lt;value&gt;<br>to set new value for temperature update trigger<p>";
+    message += "&lt;IP-Adresse&gt;&#47;temp?corr=&lt;value&gt;<br>to set a correction factor for temperature<p>";
+    message += "&lt;IP-Adresse&gt;&#47;humidity?delta=&lt;value&gt;<br>to set new value for humidity update trigger<p> ";
+    message += "&lt;IP-Adresse&gt;&#47;humidity?corr=&lt;value&gt;<br>to set a correction factor for humidity<p>";
+    message += "&lt;IP-Adresse&gt;&#47;time?delta=&lt;value&gt;<br>to set interval for smarthome controller update (s)<p>";
+    message += "&lt;IP-Adresse&gt;&#47;time?meter=&lt;value&gt;<br>to set interval fot metering (s)</h4></div>";
+    message += "</body></html>";
+    
+    server.send(200, "text/html", message);
+}
 void message_time() {
   String delta = server.arg("delta");
   String meter = server.arg("meter");
@@ -353,7 +378,8 @@ void setup() {
   server.on("/temp", message_temp);
   server.on("/humidity", message_humidity);
   server.on("/time", message_time);
-  server.on("/status", message_status); 
+  server.on("/status", message_status);
+  server.on("/help", message_help);
 
   server.begin();
 
