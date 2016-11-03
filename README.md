@@ -24,13 +24,19 @@ Install:
    hint: use name of room as prefix, in the case you plan to have more then one of these small guys
 * use variables and values in own programs on CCU
 * http://ip-adress for mobile friendly website (see screenshot01.PNG)
-* http://ip-adress/status for status and additional commands
+* http://ip-adress/status for status
+* http://ip-adress/status for help
 
 Todos:
-* proper webinterface for status screen
+* addon for presence recognition
 * 3d printable enclosure
 * addon for [WeMos Battery shield](https://www.wemos.cc/product/battery-shield.html)
 * additional **connectedobjects**: wifi switch, OLED display, motion detector, etc.
+
+Usage:
+* push: updates variables on smarthome controller via html requests push (Sensor sends to Controller) and/or
+* pull: updates or metering parameters can be read (and set) via pull requests (Controller asks for updates) and/or
+* webinterface for humans
 
 Pictures:
 mobile friendly website
