@@ -40,3 +40,7 @@ mobile friendly website
 status screen
 
 ![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/screenshot02.PNG)
+
+help screen for html pull request from smarthome controller
+
+![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/screenshot03.PNG)
