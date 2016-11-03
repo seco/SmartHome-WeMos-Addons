@@ -53,4 +53,4 @@ help screen for html pull request from smarthome controller
 
 initial setup
 ![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/initial_setup01.png)
-![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/initial_setup02.png)
+![](https://github.com/holgerimbery/SmartHome-WeMos-Addons/blob/master/screens/initialsetup02.png)
