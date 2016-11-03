@@ -25,7 +25,7 @@ Install:
 * use variables and values in own programs on CCU
 * http://ip-adress for mobile friendly website (see screenshot01.PNG)
 * http://ip-adress/status for status
-* http://ip-adress/status for help
+* http://ip-adress/help for help
 
 Todos:
 * addon for presence recognition
