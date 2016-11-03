@@ -12,7 +12,7 @@ Hardware:
 
 
 Software - Arduino Sketch:
-* Setup in Accesspoint Mode based on ![wifi manager](https://github.com/tzapu/WiFiManager 
+* Setup in Accesspoint Mode based on wifi manager![](https://github.com/tzapu/WiFiManager 
   (Wifi parameters, CCU IP Adress, variables for humidity and temperature) 
 * the configuration is stored as json in fs
 * sensor data is transmitted to CCU and/or can be pulled via html requests
