@@ -30,6 +30,8 @@ Install:
 * http://ip-adress/help for help (see screenshot03.PNG)
 
 Todos:
+* thingspeak as an alternative  
+* mqtt as an alternative to eq3 CCU
 * addon for presence recognition, to use give presence information to ccu - e.g. heating only if room is used.
 * addon for [WeMos Battery shield](https://www.wemos.cc/product/battery-shield.html)
 * 3d printable enclosure, with/without space for LiPo
