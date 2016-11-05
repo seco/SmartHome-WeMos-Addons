@@ -4,17 +4,18 @@
 With this code and some hardware (cheap development boards and shields), you are able to create *connectedobjects* for [eq3 homematic CCU](http://www.eq-3.de/produkte/homematic.html). These __connectedobjects__ are small IoT bricks offering additional actuators or sensor funcionality to your SmartHome Controller.  
 
 First connectedobject is the
-__connectedobject HumiTemp__ 
+__connectedobject HumiTemp__, 
 a temperature/humidity sensor for the ccu
 
 Hardware:
 * [WeMos d1 mini](https://www.wemos.cc/product/d1-mini.html) & [WeMos DHT11 shield](https://www.wemos.cc/product/dht-shield.html)
 
 
-Software - Arduino Sketch:
-* Setup in Accesspoint Mode based on wifi manager library https://github.com/tzapu/WiFiManager
-  (Wifi parameters, CCU IP Adress, variables for humidity and temperature) 
+Software functions- Arduino Sketch:
+* setup in Accesspoint Mode based on wifi manager library https://github.com/tzapu/WiFiManager
+  (Wifi parameters, CCU IP Adress, sensors hostname, variables for humidity and temperature) 
 * the configuration is stored as json in fs
+* http interface is announced via bonjour
 * sensor data is transmitted to CCU and/or can be pulled via html requests
 
 
@@ -38,8 +39,8 @@ Todos:
 * additional **connectedobjects**: wifi switch, OLED statusdisplay, motion detector, light barrier etc.
 
 Usage:
-* push: updates variables on smarthome controller via html push (Sensor sends to Controller) and/or
-* pull: updates or metering parameters can be read (and set) via pull requests (Controller asks for updates) and/or
+* push: update variables on smarthome controller via html push (Sensor sends to Controller) and/or
+* pull: update or metering parameters can be read (and set) via pull requests (Controller asks for updates) and/or
 * webinterface for humans
 
 Pictures:
