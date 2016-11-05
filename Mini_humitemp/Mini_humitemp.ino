@@ -1,22 +1,32 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *   http://www.apache.org/licenses/LICENSE-2.0
- *   
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * (c) Holger Imbery, contact@connectedobjects.cloud 
- */
+
+The MIT License (MIT)
+
+Copyright (c) 2016 HOLGER IMBERY, CONTACT@CONNECTEDOBJECTS.CLOUD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 
-#include <FS.h>                   
+#include <FS.h>
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
-#include <ESP8266mDNS.h>          
+#include <ESP8266mDNS.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
@@ -37,7 +47,7 @@ void saveConfigCallback () {
 
 unsigned long dReadSeconds = 60;
 float cTemp = 0;
-float cHumi = 0; 
+float cHumi = 0;
 
 unsigned long dMessageSeconds = 3600;
 float dTemp = 1;
@@ -48,90 +58,90 @@ float humidity = 0, humidityCCU = 0, temp = 0, tempCCU = 0;
 unsigned long nowMillis = 0;
 unsigned long dReadMillis = dReadSeconds * 1000, lastReadMillis = 0;
 unsigned long dMessageMillis = dMessageSeconds * 1000, lastMessageMillis = 0;
-String answer = "", message = "",lastmessageCCUtime = "";
+String answer = "", message = "", lastmessageCCUtime = "";
 
 
-String timestamp() { 
+String timestamp() {
   char stamp[10];
-  int currenth = millis()/3600000;
-  int currentm = millis()/60000-currenth*60;
-  int currents = millis()/1000-currenth*3600-currentm*60;
-  sprintf (stamp,"%03d:%02d:%02d", currenth, currentm, currents);
+  int currenth = millis() / 3600000;
+  int currentm = millis() / 60000 - currenth * 60;
+  int currents = millis() / 1000 - currenth * 3600 - currentm * 60;
+  sprintf (stamp, "%03d:%02d:%02d", currenth, currentm, currents);
   return stamp;
 }
 
 void metering() {
   humidity = dht.readHumidity() + cHumi;
-    temp = dht.readTemperature() + cTemp;
-    if (isnan(humidity) || isnan(temp)) {
-     Serial.println(timestamp() + "  error: no data from sensor");
-     delay(100);
-     return;
-    }
+  temp = dht.readTemperature() + cTemp;
+  if (isnan(humidity) || isnan(temp)) {
+    Serial.println(timestamp() + "  error: no data from sensor");
+    delay(100);
+    return;
+  }
   lastReadMillis = nowMillis;
   Serial.println(timestamp() + "  humidity: " + humidity + " %  temperature: " + temp + " * C");
 }
 
-void message_CCU() { 
-  WiFiClient client; 
-  if (!client.connect(ip_adress_ccu, 8181)) { 
+void message_CCU() {
+  WiFiClient client;
+  if (!client.connect(ip_adress_ccu, 8181)) {
     Serial.println(timestamp() + "  error: no connection to CCU");
-     delay(600);
+    delay(600);
     return;
   }
   message = "GET /wormhole.exe?answer1=dom.GetObject('" + String(variable_humi) + "').State('" + humidity + "')";
   message = message + "&answer2=dom.GetObject('" + String(variable_temp) + "').State('" + temp + "')";
 
-  client.println(message); 
+  client.println(message);
   delay(100);
   int i = 0;
   String line = "";
-  
-  while(client.available()){ 
+
+  while (client.available()) {
     i ++;
     line = client.readStringUntil('\n');
     if (i == 7) {
       lastmessageCCUtime = line;
-      
+
     }
   }
   Serial.println(timestamp() + "  data writen to ccu " + lastmessageCCUtime);
   lastMessageMillis = nowMillis;
   humidityCCU = humidity;
   tempCCU = temp;
-} 
-
-void message_status() { 
-  String uptime = timestamp();
-    String cssClass = "mediumhot";
-    String message = "<!DOCTYPE html><html><head><title>status</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
-    message += "html {height: 100%;}";
-    message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
-    message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
-    message += "body {height: 100%;}";
-    message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
-    message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
-    message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
-    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>Status</h1>";
-    message += "<h4>uptime: " + uptime + " (hhh:mm:ss)<p>";
-    message += "last metering<br>";
-    message += "temperature: " + String(temp) + " * C<br>";
-    message += "humidity: " + String(humidity) + " %\<p>";
-    message += "metering correction values<br>";
-    message += "temperatur: " + String(cTemp) + " * C<br>";
-    message += "humidity: " + String(cHumi) + " %<p>";
-    message += "smarthome conroller updates<br>";
-    message += "last transmission " + lastmessageCCUtime + "<br>";
-    message += "written temperature: " + String(tempCCU) + " * C<br>";
-    message += "written humidity: " + String(humidityCCU) + " %<p>";
-    message += "trigger for data transfers<br>";
-    message += "timeinterval: " + String(dMessageSeconds) + " seconds<br>";
-    message += "delta temperature: " + String(dTemp) + " * C<br>";
-    message += "delta humidity: " + String(dHumi) + " %<p>";
-    message += "</h4></div></body></html>";
-    server.send(200, "text/html", message);
 }
-  
+
+void message_status() {
+  String uptime = timestamp();
+  String cssClass = "mediumhot";
+  String message = "<!DOCTYPE html><html><head><title>status</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
+  message += "html {height: 100%;}";
+  message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
+  message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
+  message += "body {height: 100%;}";
+  message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
+  message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
+  message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
+  message += "</style></head><body class=\"" + cssClass + "\"><div><h1>Status</h1>";
+  message += "<h4>uptime: " + uptime + " (hhh:mm:ss)<p>";
+  message += "last metering<br>";
+  message += "temperature: " + String(temp) + " * C<br>";
+  message += "humidity: " + String(humidity) + " %\<p>";
+  message += "metering correction values<br>";
+  message += "temperatur: " + String(cTemp) + " * C<br>";
+  message += "humidity: " + String(cHumi) + " %<p>";
+  message += "smarthome controller updates<br>";
+  message += "last transmission " + lastmessageCCUtime + "<br>";
+  message += "written temperature: " + String(tempCCU) + " * C<br>";
+  message += "written humidity: " + String(humidityCCU) + " %<p>";
+  message += "trigger for data transfers<br>";
+  message += "timeinterval: " + String(dMessageSeconds) + " seconds<br>";
+  message += "delta temperature: " + String(dTemp) + " * C<br>";
+  message += "delta humidity: " + String(dHumi) + " %<p>";
+  message += "</h4></div></body></html>";
+  server.send(200, "text/html", message);
+}
+
 void message_humidity() {
   String delta = server.arg("delta");
   String corr = server.arg("corr");
@@ -151,7 +161,7 @@ void message_humidity() {
     server.send(200, "text/plain", String(humidity));
     delay(100);
     Serial.println(timestamp() + "  humidity presented for pull");
-  } 
+  }
 }
 
 void message_temp() {
@@ -177,61 +187,61 @@ void message_temp() {
 }
 
 
-void message_root(){
+void message_root() {
   float temperature = temp;
   //float humidity = humidity;
   char temperatureString[6];
   char humidityString[11];
   dtostrf(temperature, 2, 2, temperatureString);
   dtostrf(humidity, 2, 2, humidityString);
-  
-    String title = "Temperature";
-    String cssClass = "mediumhot";
-     String subtitle = "Humidity";
-  
-    if (temperature < 0)
-      cssClass = "cold";
-    else if (temperature > 20)
-      cssClass = "hot";
-  
-    String message = "<!DOCTYPE html><html><head><title>" + title + "</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
-    message += "html {height: 100%;}";
-    message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
-    message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
-    message += "body {height: 100%;}";
-    message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
-    message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
-    message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
-    message += "</style></head><body class=\"" + cssClass + "\"><div><h1>" + title +  "</h1><h2>" + temperatureString + "&nbsp;<small>&deg;C</small> <p> <h1>" + subtitle +  "</h1><h2>" + humidityString + "&nbsp;<small>&#37;</small></h2><p><p>";
-    //message += "<FORM style=\"color:blue;font-size:10px;\" METHOD=\"LINK\" ACTION=\"/status\"/><INPUT TYPE=\"submit\" VALUE=\"system status\"/></FORM>";
-    message += "</div></body></html>";
-    
-    server.send(200, "text/html", message);
+
+  String title = "Temperature";
+  String cssClass = "mediumhot";
+  String subtitle = "Humidity";
+
+  if (temperature < 0)
+    cssClass = "cold";
+  else if (temperature > 20)
+    cssClass = "hot";
+
+  String message = "<!DOCTYPE html><html><head><title>" + title + "</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
+  message += "html {height: 100%;}";
+  message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
+  message += "h2 {font-size: 90px;font-weight: 400; margin: 0}";
+  message += "body {height: 100%;}";
+  message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
+  message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
+  message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
+  message += "</style></head><body class=\"" + cssClass + "\"><div><h1>" + title +  "</h1><h2>" + temperatureString + "&nbsp;<small>&deg;C</small> <p> <h1>" + subtitle +  "</h1><h2>" + humidityString + "&nbsp;<small>&#37;</small></h2><p><p>";
+  //message += "<FORM style=\"color:blue;font-size:10px;\" METHOD=\"LINK\" ACTION=\"/status\"/><INPUT TYPE=\"submit\" VALUE=\"system status\"/></FORM>";
+  message += "</div></body></html>";
+
+  server.send(200, "text/html", message);
 }
 void message_help() {
 
-    String cssClass = "mediumhot";
-String message = "<!DOCTYPE html><html><head><title> Help</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
-    message += "html {height: 100%;}";
-    message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
-    message += "h2 {font-size: 25px;font-weight: 400; margin: 0}";
-    message += "body {height: 100%;}";
-    message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
-    message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
-    message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
-    message += "</style></head><body class=\"" + cssClass + "\"><div><h2>Help</h2>";
-    message += "<h5>&lt;IP-Adresse&gt;&#47;temp&#09;&#09;returns temperature in (Celsius)<p>";
-    message += "&lt;IP-Adresse&gt;&#47;humidity&#09;&#09;returns humidity in (percent)<p>";
-    message += "&lt;IP-Adresse&gt;&#47;time&#09;&#09;returns time of last smarthome controller update<p>";
-    message += "&lt;IP-Adresse&gt;&#47;temp?delta=&lt;value&gt;&#09;&#09;to set new value for temperature update trigger<p>";
-    message += "&lt;IP-Adresse&gt;&#47;temp?corr=&lt;value&gt;&#09;&#09;to set a correction factor for temperature<p>";
-    message += "&lt;IP-Adresse&gt;&#47;humidity?delta=&lt;value&gt;&#09;&#09;to set new value for humidity update trigger<p> ";
-    message += "&lt;IP-Adresse&gt;&#47;humidity?corr=&lt;value&gt;&#09;&#09;to set a correction factor for humidity<p>";
-    message += "&lt;IP-Adresse&gt;&#47;time?delta=&lt;value&gt;&#09;&#09;to set interval for smarthome controller update (s)<p>";
-    message += "&lt;IP-Adresse&gt;&#47;time?meter=&lt;value&gt;&#09;&#09;to set interval for metering (s)</h5></div>";
-    message += "</body></html>";
-    
-    server.send(200, "text/html", message);
+  String cssClass = "mediumhot";
+  String message = "<!DOCTYPE html><html><head><title> Help</title><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width\" /><link href='https://fonts.googleapis.com/css?family=Advent+Pro' rel=\"stylesheet\" type=\"text/css\"><style>\n";
+  message += "html {height: 100%;}";
+  message += "div {color: #fff;font-family: 'Advent Pro';font-weight: 400;left: 50%;position: absolute;text-align: center;top: 50%;transform: translateX(-50%) translateY(-50%);}";
+  message += "h2 {font-size: 25px;font-weight: 400; margin: 0}";
+  message += "body {height: 100%;}";
+  message += ".cold {background: linear-gradient(to bottom, #7abcff, #0665e0 );}";
+  message += ".mediumhot {background: linear-gradient(to bottom, #81ef85,#057003);}";
+  message += ".hot {background: linear-gradient(to bottom, #fcdb88,#d32106);}";
+  message += "</style></head><body class=\"" + cssClass + "\"><div><h2>Help</h2>";
+  message += "<h5>&lt;IP-Adresse&gt;&#47;temp&#09;&#09;returns temperature in (Celsius)<p>";
+  message += "&lt;IP-Adresse&gt;&#47;humidity&#09;&#09;returns humidity in (percent)<p>";
+  message += "&lt;IP-Adresse&gt;&#47;time&#09;&#09;returns time of last smarthome controller update<p>";
+  message += "&lt;IP-Adresse&gt;&#47;temp?delta=&lt;value&gt;&#09;&#09;to set new value for temperature update trigger<p>";
+  message += "&lt;IP-Adresse&gt;&#47;temp?corr=&lt;value&gt;&#09;&#09;to set a correction factor for temperature<p>";
+  message += "&lt;IP-Adresse&gt;&#47;humidity?delta=&lt;value&gt;&#09;&#09;to set new value for humidity update trigger<p> ";
+  message += "&lt;IP-Adresse&gt;&#47;humidity?corr=&lt;value&gt;&#09;&#09;to set a correction factor for humidity<p>";
+  message += "&lt;IP-Adresse&gt;&#47;time?delta=&lt;value&gt;&#09;&#09;to set interval for smarthome controller update (s)<p>";
+  message += "&lt;IP-Adresse&gt;&#47;time?meter=&lt;value&gt;&#09;&#09;to set interval for metering (s)</h5></div>";
+  message += "</body></html>";
+
+  server.send(200, "text/html", message);
 }
 void message_time() {
   String delta = server.arg("delta");
@@ -268,7 +278,7 @@ void setup() {
   Serial.println(timestamp() + "  mounting FS...");
 
   if (SPIFFS.begin()) {
-  Serial.println(timestamp() + "  mounted file system");
+    Serial.println(timestamp() + "  mounted file system");
     if (SPIFFS.exists("/config.json")) {
       //file exists, reading and loading
       Serial.println(timestamp() + "  reading config file");
@@ -284,22 +294,22 @@ void setup() {
         JsonObject& json = jsonBuffer.parseObject(buf.get());
         json.printTo(Serial);
         if (json.success()) {
-            Serial.println(timestamp() + "  parsed json");
+          Serial.println(timestamp() + "  parsed json");
           strcpy(hostname_sensor, json["hostname_sensor"]);
           strcpy(ip_adress_ccu, json["ip_adress_ccu"]);
           strcpy(variable_temp, json["variable_temp"]);
           strcpy(variable_humi, json["variable_humi"]);
         } else {
-            Serial.println(timestamp() + "  failed to load json config");
+          Serial.println(timestamp() + "  failed to load json config");
         }
       }
     }
   } else {
-      Serial.println(timestamp() + "  failed to mount FS");
+    Serial.println(timestamp() + "  failed to mount FS");
 
   }
 
-   
+
   //end read
 
 
@@ -307,24 +317,24 @@ void setup() {
   // The extra parameters to be configured (can be either global or just in the setup)
   // After connecting, parameter.getValue() will get you the configured value
   // id/name placeholder/prompt default length
-  WiFiManagerParameter custom_hostname_sensor("hostnames", "Hostname Sensor", hostname_sensor, 40); 
+  WiFiManagerParameter custom_hostname_sensor("hostnames", "Hostname Sensor", hostname_sensor, 40);
   WiFiManagerParameter custom_ip_adress_ccu("ccu", "Static IP CCU", ip_adress_ccu, 40);
   WiFiManagerParameter custom_variable_temp("temp", "temperature variable", variable_temp, 40);
   WiFiManagerParameter custom_variable_humi("humi", "humidity variable", variable_humi, 40);
   //WiFiManager
- 
+
   WiFiManager wifiManager;
 
   //set config save notify callback
   wifiManager.setSaveConfigCallback(saveConfigCallback);
 
   //set static ip
-  IPAddress _ip,_gw,_sn;
+  IPAddress _ip, _gw, _sn;
   _ip.fromString(static_ip);
   _gw.fromString(static_gw);
   _sn.fromString(static_sn);
   wifiManager.setSTAStaticIPConfig(_ip, _gw, _sn);
-  
+
   //add all your parameters here
   wifiManager.addParameter(&custom_hostname_sensor);
   wifiManager.addParameter(&custom_ip_adress_ccu);
@@ -336,7 +346,7 @@ void setup() {
   //set minimum quality of signal so it ignores AP's under that quality
   //defaults to 8%
   //wifiManager.setMinimumSignalQuality();
-  
+
   //sets timeout until configuration portal gets turned off
   //useful to make it all retry or go to sleep
   //in seconds
@@ -352,10 +362,10 @@ void setup() {
     delay(5000);
   }
 
-  
+
   Serial.println(timestamp() + "  connected...");
 
-  strcpy(hostname_sensor, custom_hostname_sensor.getValue());  
+  strcpy(hostname_sensor, custom_hostname_sensor.getValue());
   strcpy(ip_adress_ccu, custom_ip_adress_ccu.getValue());
   Serial.println(timestamp() + "  CCU IP Adress: " + String(ip_adress_ccu));
   strcpy(variable_temp, custom_variable_temp.getValue());
@@ -389,17 +399,17 @@ void setup() {
   server.on("/help", message_help);
 
   server.begin();
-  
+
   if (!MDNS.begin(hostname_sensor)) {
     Serial.println("Error setting up MDNS responder!");
-    while(1) { 
+    while (1) {
       delay(1000);
     }
   }
   Serial.println("mDNS responder started");
-    // Add service to MDNS-SD
+  // Add service to MDNS-SD
   MDNS.addService("http", "tcp", 80);
-  
+
 
   lastReadMillis = millis();
   lastMessageMillis = millis();
@@ -411,22 +421,22 @@ void loop() {
   server.handleClient();
   nowMillis = millis();
 
-  if(nowMillis - lastReadMillis > dReadMillis) {
+  if (nowMillis - lastReadMillis > dReadMillis) {
     Serial.println(timestamp() + "  time to get new values from sensor");
     metering();
   }
 
-  if(!dMessageMillis == 0 && nowMillis - lastMessageMillis > dMessageMillis) {
-    message_CCU();
-  }
-   
-   if(!dHumi == 0 && abs(humidity - humidityCCU) >= dHumi) {
-    Serial.println(timestamp() + "  send humidity value to ccu");    
+  if (!dMessageMillis == 0 && nowMillis - lastMessageMillis > dMessageMillis) {
     message_CCU();
   }
 
-  if(!dTemp == 0 && abs(temp - tempCCU) >= dTemp) { 
-    Serial.println(timestamp() + "  send temperature value to ccu"); 
+  if (!dHumi == 0 && abs(humidity - humidityCCU) >= dHumi) {
+    Serial.println(timestamp() + "  send humidity value to ccu");
+    message_CCU();
+  }
+
+  if (!dTemp == 0 && abs(temp - tempCCU) >= dTemp) {
+    Serial.println(timestamp() + "  send temperature value to ccu");
     message_CCU();
   }
 }
