@@ -17,7 +17,7 @@
 char static_ip[16] = "192.168.1.40";
 char static_gw[16] = "192.168.1.1";
 char static_sn[16] = "255.255.255.0";
-
+char hostname_sensor[40] = "hostname_sensor";
 char ip_adress_ccu[40] = "192.168.1.98";
 char variable_temp[40] = "standardroom_temperature";
 char variable_humi[40] = "standardroom_humidity";

@@ -16,6 +16,7 @@
 
 #include <FS.h>                   
 #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
+#include <ESP8266mDNS.h>          
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
@@ -284,7 +285,7 @@ void setup() {
         json.printTo(Serial);
         if (json.success()) {
             Serial.println(timestamp() + "  parsed json");
-
+          strcpy(hostname_sensor, json["hostname_sensor"]);
           strcpy(ip_adress_ccu, json["ip_adress_ccu"]);
           strcpy(variable_temp, json["variable_temp"]);
           strcpy(variable_humi, json["variable_humi"]);
@@ -295,7 +296,10 @@ void setup() {
     }
   } else {
       Serial.println(timestamp() + "  failed to mount FS");
+
   }
+
+   
   //end read
 
 
@@ -303,6 +307,7 @@ void setup() {
   // The extra parameters to be configured (can be either global or just in the setup)
   // After connecting, parameter.getValue() will get you the configured value
   // id/name placeholder/prompt default length
+  WiFiManagerParameter custom_hostname_sensor("hostnames", "Hostname Sensor", hostname_sensor, 40); 
   WiFiManagerParameter custom_ip_adress_ccu("ccu", "Static IP CCU", ip_adress_ccu, 40);
   WiFiManagerParameter custom_variable_temp("temp", "temperature variable", variable_temp, 40);
   WiFiManagerParameter custom_variable_humi("humi", "humidity variable", variable_humi, 40);
@@ -321,6 +326,7 @@ void setup() {
   wifiManager.setSTAStaticIPConfig(_ip, _gw, _sn);
   
   //add all your parameters here
+  wifiManager.addParameter(&custom_hostname_sensor);
   wifiManager.addParameter(&custom_ip_adress_ccu);
   wifiManager.addParameter(&custom_variable_temp);
   wifiManager.addParameter(&custom_variable_humi);
@@ -349,7 +355,7 @@ void setup() {
   
   Serial.println(timestamp() + "  connected...");
 
-  
+  strcpy(hostname_sensor, custom_hostname_sensor.getValue());  
   strcpy(ip_adress_ccu, custom_ip_adress_ccu.getValue());
   Serial.println(timestamp() + "  CCU IP Adress: " + String(ip_adress_ccu));
   strcpy(variable_temp, custom_variable_temp.getValue());
@@ -360,6 +366,7 @@ void setup() {
     Serial.println(timestamp() + "  saving config");
     DynamicJsonBuffer jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
+    json["hostname_sensor"] = hostname_sensor;
     json["ip_adress_ccu"] = ip_adress_ccu;
     json["variable_temp"] = variable_temp;
     json["variable_humi"] = variable_humi;
@@ -382,6 +389,17 @@ void setup() {
   server.on("/help", message_help);
 
   server.begin();
+  
+  if (!MDNS.begin(hostname_sensor)) {
+    Serial.println("Error setting up MDNS responder!");
+    while(1) { 
+      delay(1000);
+    }
+  }
+  Serial.println("mDNS responder started");
+    // Add service to MDNS-SD
+  MDNS.addService("http", "tcp", 80);
+  
 
   lastReadMillis = millis();
   lastMessageMillis = millis();
