@@ -1,10 +1,9 @@
 # SmartHome-WeMos-Addons
 **Addons for SmartHome Controllers** based on WeMos D1 mini (or similar ESP8266 based development boards)
 
-With this code and some hardware (cheap development boards and shields), you are able to create *connectedobjects* for [eq3 homematic CCU](http://www.eq-3.de/produkte/homematic.html) or any mqtt protocol based SmartHome controller. These __connectedobjects__ are small IoT bricks offering additional actuators or sensor funcionality to your SmartHome Controller.  
+With this code and some hardware (cheap development boards and shields), you are able to create *connectedobjects* for [eq3 homematic CCU](http://www.eq-3.de/produkte/homematic.html) or any mqtt protocol based SmartHome controller. These __connectedobjects__ are small IoT bricks offering additional actuators or sensor funcionality to your SmartHome Controller. I prefer for Matt [thethingbox] (http://www.thethingbox.com) as an universal mqtt server and nodered appliance.
 
-First connectedobject is the
-__connectedobject HumiTemp__,
+First connectedobject is the __connectedobject HumiTemp__,
 a temperature/humidity sensor in a HomeMatic and a mqtt version (keep an eye on the appendix)
 
 Hardware:
