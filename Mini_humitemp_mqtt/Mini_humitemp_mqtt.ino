@@ -267,6 +267,28 @@ void message_help() {
 
   server.send(200, "text/html", message);
 }
+void message_time() {
+  String delta = server.arg("delta");
+  String meter = server.arg("meter");
+  if (delta != "") {
+    dMessageSeconds = delta.toInt();
+    dMessageMillis = dMessageSeconds * 1000;
+    server.send(200, "text/plain", "updated interval for server update to " + delta + " seconds");
+    delay(100);
+    Serial.println(timestamp() + "  updated interval for server update to " + delta + " seconds");
+  }
+  else if (meter != "") {
+    dReadMillis = meter.toInt() * 1000;
+    server.send(200, "text/plain", "update metering interval to " + meter + " seconds");
+    delay(100);
+    Serial.println(timestamp() + "  update metering interval to " + meter + " seconds");
+  }
+  else {
+    //server.send(200, "text/plain", "last ccu update\n" + lastmessageCCUtime);
+    //delay(100);
+    //Serial.println(timestamp() + "  last ccu update ");
+  }
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -274,7 +296,7 @@ void setup() {
   Serial.println();
 
   //clean FS, for testing
- //SPIFFS.format();
+  //SPIFFS.format();
 
   //read configuration from FS json
   Serial.println(timestamp() + "  mounting FS...");
@@ -389,6 +411,8 @@ void setup() {
     json["ip_adress_mqtt"] = ip_adress_mqtt;
     json["temperature_topic"] = temperature_topic;
     json["humidity_topic"] = humidity_topic;
+    json["mqtt_user"] = mqtt_user;
+    json["mqtt_password"] = mqtt_password;
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
       Serial.println(timestamp() + "  failed to open config file for writing");
@@ -402,6 +426,7 @@ void setup() {
 
   server.on("/", message_root);
   server.on("/temp", message_temp);
+  server.on("/time", message_time);
   server.on("/humidity", message_humidity);
   server.on("/status", message_status);
   server.on("/help", message_help);
