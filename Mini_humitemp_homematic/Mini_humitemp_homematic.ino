@@ -29,12 +29,15 @@
 #include <ESP8266mDNS.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
 #include "DHT.h"
 #include "config.h"
 ESP8266WebServer server(80);
-
+ESP8266HTTPUpdateServer httpUpdater;
+String ID = "ConnectedObjects-" + String(ESP.getChipId(),HEX);
+const char * mdnsID = ID.c_str();
 
 //flag for saving data
 bool shouldSaveConfig = false;
@@ -400,14 +403,14 @@ void setup() {
   server.on("/help", message_help);
 
   server.begin();
-
-  if (!MDNS.begin(hostname_sensor)) {
+  httpUpdater.setup(&server);
+  if (!MDNS.begin(mdnsID)) {
     Serial.println(timestamp() + "  Error setting up MDNS responder!");
     while (1) {
       delay(1000);
     }
   }
-  Serial.println(timestamp() + "  mDNS responder started");
+  Serial.println(timestamp() + "  Host: " + mdnsID + "mDNS responder started");
   // Add service to MDNS-SD
   MDNS.addService("http", "tcp", 80);
 

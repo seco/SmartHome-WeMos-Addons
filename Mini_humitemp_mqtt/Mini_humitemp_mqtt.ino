@@ -29,12 +29,16 @@
 #include <ESP8266mDNS.h>
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
 #include <PubSubClient.h>
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
 #include "DHT.h"
 #include "config.h"
 ESP8266WebServer server(80);
+ESP8266HTTPUpdateServer httpUpdater;
+String ID = "ConnectedObjects-" + String(ESP.getChipId(),HEX);
+const char * mdnsID = ID.c_str();
 
 
 //flag for saving data
@@ -87,49 +91,49 @@ void message_mqtt() {
   WiFiClient client;
   PubSubClient mqttclient(client);
   mqttclient.setServer(ip_adress_mqtt, 1883);
-    
-    
-    if (!mqtt_user == "") {
+
+
+  if (!mqtt_user == "") {
     while (!mqttclient.connected()) {
-    Serial.print(Serial.println(timestamp() + "  Attempting MQTT connection..."));
-    // Attempt to connect
-    // If you do not want to use a username and password, change next line to
-    if (mqttclient.connect(hostname_sensor)) {
-    // if (mqttclient.connect("ESP8266Client", mqtt_user, mqtt_password)) {
-      Serial.print(Serial.println(timestamp() + "  connected"));
-    } else {
-      Serial.print(Serial.println(timestamp() + "  failed, rc="));
-      Serial.print(Serial.println(timestamp() + mqttclient.state()));
-      Serial.print(Serial.println(timestamp() + "  try again in 5 seconds"));
-      // Wait 5 seconds before retrying
-      delay(5000);
+      Serial.print(Serial.println(timestamp() + "  Attempting MQTT connection..."));
+      // Attempt to connect
+      // If you do not want to use a username and password, change next line to
+      if (mqttclient.connect(hostname_sensor)) {
+        // if (mqttclient.connect("ESP8266Client", mqtt_user, mqtt_password)) {
+        Serial.print(Serial.println(timestamp() + "  connected"));
+      } else {
+        Serial.print(Serial.println(timestamp() + "  failed, rc="));
+        Serial.print(Serial.println(timestamp() + mqttclient.state()));
+        Serial.print(Serial.println(timestamp() + "  try again in 5 seconds"));
+        // Wait 5 seconds before retrying
+        delay(5000);
       }
-      } 
     }
-    else {
+  }
+  else {
     while (!mqttclient.connected()) {
-    Serial.print(Serial.println(timestamp() + "  Attempting MQTT connection..."));
-    // Attempt to connect
-    // If you do not want to use a username and password, change next line to
-    //if (mqttclient.connect(hostname_sensor)) {
-    if (mqttclient.connect("ESP8266Client", mqtt_user, mqtt_password)) {
-      Serial.print(Serial.println(timestamp() + "  connected"));
-    } else {
-      Serial.print(Serial.println(timestamp() + "  failed, rc="));
-      Serial.print(Serial.println(timestamp() + mqttclient.state()));
-      Serial.print(Serial.println(timestamp() + "  try again in 5 seconds"));
-      // Wait 5 seconds before retrying
-      delay(5000);
+      Serial.print(Serial.println(timestamp() + "  Attempting MQTT connection..."));
+      // Attempt to connect
+      // If you do not want to use a username and password, change next line to
+      //if (mqttclient.connect(hostname_sensor)) {
+      if (mqttclient.connect("ESP8266Client", mqtt_user, mqtt_password)) {
+        Serial.print(Serial.println(timestamp() + "  connected"));
+      } else {
+        Serial.print(Serial.println(timestamp() + "  failed, rc="));
+        Serial.print(Serial.println(timestamp() + mqttclient.state()));
+        Serial.print(Serial.println(timestamp() + "  try again in 5 seconds"));
+        // Wait 5 seconds before retrying
+        delay(5000);
       }
-      }
-      
     }
 
-    
+  }
+
+
   mqttclient.publish(temperature_topic, String(temp).c_str(), true);
   mqttclient.publish(humidity_topic, String(humidity).c_str(), true);
   Serial.print(Serial.println(timestamp() + " new humidity: " + String(humidity)));
-  Serial.print(Serial.println(timestamp() + " new temperature: " + String(temp)));  
+  Serial.print(Serial.println(timestamp() + " new temperature: " + String(temp)));
   Serial.println(timestamp() + "  data writen to mqtt ");
   lastMessageMillis = nowMillis;
   humiditymqtt = humidity;
@@ -432,14 +436,15 @@ void setup() {
   server.on("/help", message_help);
 
   server.begin();
+  httpUpdater.setup(&server);
 
-  if (!MDNS.begin(hostname_sensor)) {
+  if (!MDNS.begin(mdnsID)) {
     Serial.println(timestamp() + "  Error setting up MDNS responder!");
     while (1) {
       delay(1000);
     }
   }
-  Serial.println(timestamp() + "  mDNS responder started");
+  Serial.println(timestamp() + "  Host: " + mdnsID + "mDNS responder started");
   // Add service to MDNS-SD
   MDNS.addService("http", "tcp", 80);
 
@@ -467,12 +472,12 @@ void loop() {
   if (!dHumi == 0 && abs(humidity - humiditymqtt) >= dHumi) {
     Serial.println(timestamp() + "  send humidity value to mqtt");
     message_mqtt();
- 
+
   }
 
   if (!dTemp == 0 && abs(temp - tempmqtt) >= dTemp) {
     Serial.println(timestamp() + "  send temperature value to mqtt");
     message_mqtt();
-    
+
   }
 }
