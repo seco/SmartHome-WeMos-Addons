@@ -327,8 +327,9 @@ void setup() {
           strcpy(ip_adress_mqtt, json["ip_adress_mqtt"]);
           strcpy(temperature_topic, json["temperature_topic"]);
           strcpy(humidity_topic, json["humidity_topic"]);
-          strcpy(humidity_topic, json["mqtt_user"]);
-          strcpy(humidity_topic, json["mqtt_password"]);
+          strcpy(mqtt_user, json["mqtt_user"]);
+          strcpy(mqtt_password, json["mqtt_password"]);
+          strcpy(update_password, json["update_password"]);       
         } else {
           Serial.println(timestamp() + "  failed to load json config");
         }
@@ -353,6 +354,7 @@ void setup() {
   WiFiManagerParameter custom_humidity_topic("humi", "humidity topic", humidity_topic, 40);
   WiFiManagerParameter custom_mqtt_user("user", "mqtt user", mqtt_user, 40);
   WiFiManagerParameter custom_mqtt_password("password", "mqtt password", mqtt_password, 40);
+  WiFiManagerParameter custom_update_password("updatepassword", "ota updatepassword", update_password, 40);  
   //WiFiManager
 
   WiFiManager wifiManager;
@@ -374,6 +376,7 @@ void setup() {
   wifiManager.addParameter(&custom_humidity_topic);
   wifiManager.addParameter(&custom_mqtt_user);
   wifiManager.addParameter(&custom_mqtt_password);
+  wifiManager.addParameter(&custom_update_password);
   //reset settings - for testing
   //wifiManager.resetSettings();
 
@@ -406,6 +409,7 @@ void setup() {
   strcpy(humidity_topic, custom_humidity_topic.getValue());
   strcpy(mqtt_user, custom_mqtt_user.getValue());
   strcpy(mqtt_password, custom_mqtt_password.getValue());
+  strcpy(update_password, custom_update_password.getValue());
 
   if (shouldSaveConfig) {
     Serial.println(timestamp() + "  saving config");
@@ -417,6 +421,7 @@ void setup() {
     json["humidity_topic"] = humidity_topic;
     json["mqtt_user"] = mqtt_user;
     json["mqtt_password"] = mqtt_password;
+    json["update_password"] = update_password;   
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
       Serial.println(timestamp() + "  failed to open config file for writing");
@@ -436,7 +441,7 @@ void setup() {
   server.on("/help", message_help);
 
   server.begin();
-  httpUpdater.setup(&server);
+  httpUpdater.setup(&server, update_path, update_username, update_password);
 
   if (!MDNS.begin(mdnsID)) {
     Serial.println(timestamp() + "  Error setting up MDNS responder!");

@@ -31,6 +31,9 @@ char hostname_sensor[40] = "hostname_sensor";
 char ip_adress_ccu[40] = "192.168.1.98";
 char variable_temp[40] = "standardroom_temperature";
 char variable_humi[40] = "standardroom_humidity";
+const char* update_path = "/firmware";
+const char* update_username = "admin";
+char update_password[40] = "connectedobjects";
 
 
 DHT dht(D4, DHT11);

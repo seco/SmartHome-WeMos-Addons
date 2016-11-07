@@ -303,6 +303,7 @@ void setup() {
           strcpy(ip_adress_ccu, json["ip_adress_ccu"]);
           strcpy(variable_temp, json["variable_temp"]);
           strcpy(variable_humi, json["variable_humi"]);
+          strcpy(update_password, json["update_password"]);
         } else {
           Serial.println(timestamp() + "  failed to load json config");
         }
@@ -325,6 +326,7 @@ void setup() {
   WiFiManagerParameter custom_ip_adress_ccu("ccu", "Static IP CCU", ip_adress_ccu, 40);
   WiFiManagerParameter custom_variable_temp("temp", "temperature variable", variable_temp, 40);
   WiFiManagerParameter custom_variable_humi("humi", "humidity variable", variable_humi, 40);
+  WiFiManagerParameter custom_update_password("updatepassword", "ota updatepassword", update_password, 40);  
   //WiFiManager
 
   WiFiManager wifiManager;
@@ -344,6 +346,7 @@ void setup() {
   wifiManager.addParameter(&custom_ip_adress_ccu);
   wifiManager.addParameter(&custom_variable_temp);
   wifiManager.addParameter(&custom_variable_humi);
+  wifiManager.addParameter(&custom_update_password);
   //reset settings - for testing
   //wifiManager.resetSettings();
 
@@ -374,7 +377,7 @@ void setup() {
   Serial.println(timestamp() + "  CCU IP Adress: " + String(ip_adress_ccu));
   strcpy(variable_temp, custom_variable_temp.getValue());
   strcpy(variable_humi, custom_variable_humi.getValue());
-
+  strcpy(update_password, custom_update_password.getValue());
 
   if (shouldSaveConfig) {
     Serial.println(timestamp() + "  saving config");
@@ -384,6 +387,7 @@ void setup() {
     json["ip_adress_ccu"] = ip_adress_ccu;
     json["variable_temp"] = variable_temp;
     json["variable_humi"] = variable_humi;
+    json["update_password"] = update_password;
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
       Serial.println(timestamp() + "  failed to open config file for writing");
@@ -403,7 +407,7 @@ void setup() {
   server.on("/help", message_help);
 
   server.begin();
-  httpUpdater.setup(&server);
+  httpUpdater.setup(&server, update_path, update_username, update_password);
   if (!MDNS.begin(mdnsID)) {
     Serial.println(timestamp() + "  Error setting up MDNS responder!");
     while (1) {

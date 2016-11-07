@@ -33,5 +33,8 @@ char temperature_topic[40] = "sensor/temperature";
 char humidity_topic[40] = "sensor/humidity";
 char mqtt_user[40] = "";
 char mqtt_password[40] = "";
+const char* update_path = "/firmware";
+const char* update_username = "admin";
+char update_password[40] = "connectedobjects";
 
 DHT dht(D4, DHT11);

@@ -33,18 +33,18 @@ Install:
 * http://ip-adress for mobile friendly website (see screenshot01.PNG)
 * http://ip-adress/status for status (see screenshot02.PNG)
 * http://ip-adress/help for help (see screenshot03.PNG)
-* OTA Update http://ip-adress/update if you are using your sensor in a non save environment, comment out the line
+* OTA Update http://ip-adress/firmware if you are using your sensor in a non save environment, comment out the line
 ```
-httpUpdater.setup(&server);
+  httpUpdater.setup(&server, update_path, update_username, update_password);
 ```
-or your sensor will end as a zombie in a botnet. I prefer to have my sensors in a separate network with firewall and a jumphost to configure them. 
+or your sensor will end as a zombie in a botnet. I prefer to have my sensors in a separate network with firewall and a jumphost to configure them. Please configure the update password during the initial setup when your sensor is in AP Mode. The username is admin.
 
 Todos:
 * thingspeak as an visualization alternative
 * addon for presence recognition, to use give presence information to ccu - e.g. heating only if room is used.
 * addon for [WeMos Battery shield](https://www.wemos.cc/product/battery-shield.html)
 * 3d printable enclosure, with/without space for LiPo
-* additional **connectedobjects**: wifi switch, OLED statusdisplay, motion detector, light barrier etc.
+* additional **connectedobjects**: wifi switch, OLED status display, motion detector, light barrier etc.
 
 Usage:
 * (HomeMatic) push: update variables on smarthome controller via html push (Sensor sends to Controller) and/or
