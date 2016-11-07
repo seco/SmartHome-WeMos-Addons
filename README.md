@@ -37,7 +37,7 @@ Install:
 ```
 httpUpdater.setup(&server);
 ```
-or your sensor will and as a zombie in a botnet. I prefer to have my sensors in a separate network with firewall and a jumphost to configure them. 
+or your sensor will end as a zombie in a botnet. I prefer to have my sensors in a separate network with firewall and a jumphost to configure them. 
 
 Todos:
 * thingspeak as an visualization alternative
