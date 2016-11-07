@@ -33,6 +33,11 @@ Install:
 * http://ip-adress for mobile friendly website (see screenshot01.PNG)
 * http://ip-adress/status for status (see screenshot02.PNG)
 * http://ip-adress/help for help (see screenshot03.PNG)
+* OTA Update http://ip-adress/update if you are using your sensor in a non save environment, comment out the line
+```
+httpUpdater.setup(&server);
+```
+or your sensor will and as a zombie in a botnet. I prefer to have my sensors in a separate network with firewall and a jumphost to configure them. 
 
 Todos:
 * thingspeak as an visualization alternative
